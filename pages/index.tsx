@@ -93,7 +93,7 @@ const Home = () => {
     return (
         <div>
             <h1>Nano testnet faucet</h1>
-            <h2>Pays 1 nano</h2>
+            <h2>Pays 1 test nano</h2>
             <h3>Please be nice :)</h3>
             {generatingWork && (
                 <h1>
