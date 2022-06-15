@@ -17,7 +17,7 @@ const Home = () => {
 
     const onRequestNano = async (address: string) => {
         const infoResponse = await fetch(
-            "http://nano-testnet.filipesm.com:17076/",
+            "https://nano-testnet.filipesm.com/rpc",
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -60,7 +60,7 @@ const Home = () => {
         const { signature } = await signatureResponse.json();
 
         const processResponse = await fetch(
-            "http://nano-testnet.filipesm.com:17076/",
+            "https://nano-testnet.filipesm.com/rpc",
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
