@@ -138,6 +138,13 @@ const Home = () => {
                 />
                 <button type="submit">Get test nano</button>
             </form>
+
+            <a
+                href="https://github.com/filipesmedeiros/nano-testnet-faucet"
+                style={{ marginTop: "3rem", display: "block" }}
+            >
+                Github repo with code
+            </a>
         </div>
     );
 };
