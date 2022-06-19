@@ -1,5 +1,7 @@
 import { convert, Unit } from "nanocurrency";
 
+export const nanolookerBaseUrl = process.env.NEXT_PUBLIC_NANOLOOKER_BASE_URL;
+
 export const faucetAddress = process.env.NEXT_PUBLIC_FAUCET_ADDRESS;
 
 export const representativeAddress =
