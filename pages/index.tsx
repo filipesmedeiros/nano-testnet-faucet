@@ -29,20 +29,20 @@ const Home = () => {
         const work = await generateSendWork(previousHash);
         setStep("send");
 
-        const sendNanoRes = await fetch("/api/sendNano", {
-            body: JSON.stringify({ address, work }),
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        // const sendNanoRes = await fetch("/api/sendNano", {
+        //     body: JSON.stringify({ address, work }),
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //     },
+        // });
 
-        const data = await sendNanoRes.json();
+        // const data = await sendNanoRes.json();
 
-        if (!sendNanoRes.ok || "error" in data)
-            throw new Error("Failed to send test nano, please try again");
+        // if (!sendNanoRes.ok || "error" in data)
+        //     throw new Error("Failed to send test nano, please try again");
 
-        setHash(data.hash);
+        // setHash(data.hash);
         setStep(undefined);
     };
 

@@ -1,5 +1,5 @@
 import Big from "big.js";
-import { hashBlock } from "nanocurrency";
+import { convert, hashBlock, Unit } from "nanocurrency";
 import {
     faucetAddress,
     faucetAmountMax,
@@ -8,6 +8,8 @@ import {
     nanoRpcUrl,
     representativeAddress,
 } from "./constants";
+
+Big.PE = 50;
 
 const getTxnData = async (address: string) => {
     const infoResponse = await fetch(nanoRpcUrl, {
@@ -26,7 +28,7 @@ const getTxnData = async (address: string) => {
 
     const decimalOfPercentage = +faucetAmountPercentage / 100;
     const balanceBig = new Big(info.confirmed_balance);
-    let dropAmountBig = balanceBig.mul(decimalOfPercentage);
+    let dropAmountBig = balanceBig.times(decimalOfPercentage);
 
     // clamp the drop amount to the min and max amounts
     if (dropAmountBig.gt(faucetAmountMax))
@@ -37,8 +39,14 @@ const getTxnData = async (address: string) => {
     // empty the faucet to this person :)
     if (dropAmountBig.gt(balanceBig)) dropAmountBig = balanceBig;
 
+    const dropAmount = convert(dropAmountBig.toString(), {
+        from: Unit.raw,
+        to: Unit.Nano,
+    });
+    dropAmountBig = new Big(dropAmount).round();
+
     const newBalanceBig = balanceBig.minus(dropAmountBig);
-    const newBalance = newBalanceBig.c.join("");
+    const newBalance = newBalanceBig.toString();
 
     const hash = hashBlock({
         account: faucetAddress,
@@ -48,7 +56,12 @@ const getTxnData = async (address: string) => {
         balance: newBalance,
     });
 
-    return { hash, previousHash: info.confirmed_frontier, newBalance };
+    return {
+        hash,
+        previousHash: info.confirmed_frontier,
+        newBalance,
+        currentBalance: info.confirmed_balance,
+    };
 };
 
 export default getTxnData;
