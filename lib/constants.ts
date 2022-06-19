@@ -35,7 +35,7 @@ export const faucetAmountPercentage =
     process.env.NEXT_PUBLIC_FAUCET_AMOUNT_PERCENTAGE || "1";
 
 export const faucetAmountMinInNano =
-    process.env.NEXT_PUBLIC_FAUCET_AMOUNT_MIN_IN_NANO || "10";
+    process.env.NEXT_PUBLIC_FAUCET_AMOUNT_MIN_IN_NANO || "1";
 
 export const faucetAmountMaxInNano =
     process.env.NEXT_PUBLIC_FAUCET_AMOUNT_MAX_IN_NANO || "100";
