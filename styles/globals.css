@@ -37,6 +37,10 @@ main #faucet-drop-link {
     display: block;
 }
 
+main #receive-all {
+    margin-top: 1rem;
+}
+
 form {
     border-top: 1px solid #dce9f9;
     padding: 1rem 2rem 0 2rem;

@@ -18,6 +18,7 @@ import {
 const Home = () => {
     const [step, setStep] = useState<"info" | "work" | "send">();
     const [hash, setHash] = useState<string>();
+    const [receivingAll, setReceivingAll] = useState(false);
 
     const onRequestNano = async (address: string) => {
         setHash(undefined);
@@ -29,20 +30,20 @@ const Home = () => {
         const work = await generateSendWork(previousHash);
         setStep("send");
 
-        // const sendNanoRes = await fetch("/api/sendNano", {
-        //     body: JSON.stringify({ address, work }),
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //     },
-        // });
+        const sendNanoRes = await fetch("/api/sendNano", {
+            body: JSON.stringify({ address, work }),
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
 
-        // const data = await sendNanoRes.json();
+        const data = await sendNanoRes.json();
 
-        // if (!sendNanoRes.ok || "error" in data)
-        //     throw new Error("Failed to send test nano, please try again");
+        if (!sendNanoRes.ok || "error" in data)
+            throw new Error("Failed to send test nano, please try again");
 
-        // setHash(data.hash);
+        setHash(data.hash);
         setStep(undefined);
     };
 
@@ -114,6 +115,22 @@ const Home = () => {
                         the node&apos;s URL to a test node in the settings!
                     </a>
                 )}
+
+                <button
+                    id="receive-all"
+                    disabled={receivingAll}
+                    onClick={async () => {
+                        setReceivingAll(true);
+                        await fetch("/api/receiveAll", { method: "POST" });
+                        setReceivingAll(false);
+                    }}
+                >
+                    {!receivingAll ? (
+                        "Try to receive all receivable txns"
+                    ) : (
+                        <div id="spin"></div>
+                    )}
+                </button>
             </main>
 
             <footer>

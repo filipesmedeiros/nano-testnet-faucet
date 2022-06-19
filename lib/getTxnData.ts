@@ -39,13 +39,17 @@ const getTxnData = async (address: string) => {
     // empty the faucet to this person :)
     if (dropAmountBig.gt(balanceBig)) dropAmountBig = balanceBig;
 
-    const dropAmount = convert(dropAmountBig.toString(), {
+    const dropAmountInNano = convert(dropAmountBig.toString(), {
         from: Unit.raw,
         to: Unit.Nano,
     });
-    dropAmountBig = new Big(dropAmount).round();
+    dropAmountBig = new Big(dropAmountInNano).round();
+    const dropAmount = convert(dropAmountBig.toString(), {
+        from: Unit.Nano,
+        to: Unit.raw,
+    });
 
-    const newBalanceBig = balanceBig.minus(dropAmountBig);
+    const newBalanceBig = balanceBig.minus(dropAmount);
     const newBalance = newBalanceBig.toString();
 
     const hash = hashBlock({
