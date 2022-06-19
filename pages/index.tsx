@@ -95,7 +95,7 @@ const Home = () => {
                         placeholder="Insert your testnet address here"
                     />
                     <button disabled={!!step} type="submit">
-                        Get test nano
+                        {!step ? "Get test nano" : <div id="spin"></div>}
                     </button>
                 </form>
 
