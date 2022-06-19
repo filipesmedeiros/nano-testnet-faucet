@@ -1,99 +1,41 @@
-import { convert, Unit, hashBlock } from "nanocurrency";
-import Big from "big.js";
 import { useState } from "react";
 import generateSendWork from "../lib/promisifyNanoWebGLPoW";
-
-const faucetAddress =
-    "nano_1u7fqn3hsrgqmxduboyxq9wgobse84taappnexuiiso1kzui7noj41ehsdj8";
-const rep = "nano_31d4ymibpnsr9t1kcgtpgxzw6iiooufanbbsrh7wrstsj6c5h4owug1abhqb";
-
-const addressRegex =
-    /^(nano|xrb)_[13]{1}[13456789abcdefghijkmnopqrstuwxyz]{59}$/;
-
-const amountRaw = convert("1", { from: Unit.Nano, to: Unit.raw });
+import getTxnData from "../lib/getTxnData";
+import { addressRegex, faucetAmountInNano } from "../lib/constants";
 
 const Home = () => {
     const [generatingWork, setGeneratingWork] = useState(false);
+    const [hash, setHash] = useState<string>();
 
     const onRequestNano = async (address: string) => {
-        const infoResponse = await fetch(
-            "https://nano-testnet.filipesm.com/rpc",
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    action: "account_info",
-                    account: faucetAddress,
-                    include_confirmed: "true",
-                }),
-            }
-        );
+        setHash(undefined);
 
-        if (!infoResponse.ok) throw new Error("Failed to get account info");
-
-        const info = await infoResponse.json();
-
-        const newBalanceBig = new Big(info.confirmed_balance).minus(amountRaw);
-        const newBalance = newBalanceBig.c.join("");
-
-        const hash = hashBlock({
-            account: faucetAddress,
-            link: address,
-            representative: rep,
-            previous: info.confirmed_frontier,
-            balance: newBalance,
-        });
+        const { previousHash } = await getTxnData(address);
 
         setGeneratingWork(true);
-        const [work, signatureResponse] = await Promise.all([
-            generateSendWork(info.confirmed_frontier),
-            fetch("/api/signBlock", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ hash }),
-            }),
-        ]);
+        const work = await generateSendWork(previousHash);
         setGeneratingWork(false);
 
-        if (!signatureResponse.ok) throw new Error("Failed to get signature");
+        const sendNanoRes = await fetch("/api/sendNano", {
+            body: JSON.stringify({ address, work }),
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
 
-        const { signature } = await signatureResponse.json();
+        const data = await sendNanoRes.json();
 
-        const processResponse = await fetch(
-            "https://nano-testnet.filipesm.com/rpc",
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    action: "process",
-                    json_block: "true",
-                    subtype: "send",
-                    block: {
-                        type: "state",
-                        account: faucetAddress,
-                        previous: info.confirmed_frontier,
-                        representative: rep,
-                        balance: newBalance,
-                        link: address,
-                        signature,
-                        work,
-                    },
-                }),
-            }
-        );
+        if (!sendNanoRes.ok || "error" in data)
+            throw new Error("Failed to send test nano, please try again");
 
-        const data = await processResponse.json();
-
-        if (!processResponse.ok || "error" in data)
-            throw new Error("Failed to process block, please try again");
-
-        return data.hash;
+        setHash(data.hash);
     };
 
     return (
         <div>
             <h1>Nano testnet faucet</h1>
-            <h2>Pays 1 test nano</h2>
+            <h2>Pays {faucetAmountInNano} test nano</h2>
             <h3>Please be nice :)</h3>
             {generatingWork && (
                 <h1>
@@ -115,10 +57,7 @@ const Home = () => {
                         alert("Insert a valid address");
                     else {
                         try {
-                            const sendHash = await onRequestNano(
-                                address as string
-                            );
-                            alert(`Your nano has been sent! Hash: ${sendHash}`);
+                            await onRequestNano(address as string);
                         } catch (e) {
                             setGeneratingWork(false);
                             if (e instanceof Error)
@@ -138,6 +77,13 @@ const Home = () => {
                 />
                 <button type="submit">Get test nano</button>
             </form>
+
+            {hash && (
+                <a href={`https://nanolooker.com/block/${hash}`}>
+                    You can see your transaction here, but be sure to set the
+                    node&apos;s URL to a test node in the settings!
+                </a>
+            )}
 
             <a
                 href="https://github.com/filipesmedeiros/nano-testnet-faucet"
