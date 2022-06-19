@@ -6,7 +6,9 @@ import {
     donationAddress,
     email,
     faucetAddress,
-    faucetAmountInNano,
+    faucetAmountMaxInNano,
+    faucetAmountMinInNano,
+    faucetAmountPercentage,
     fediverse,
     github,
     nanolookerBaseUrl,
@@ -70,7 +72,11 @@ const Home = () => {
 
             <main>
                 <div>
-                    <h2>Pays {faucetAmountInNano} test nano</h2>
+                    <h2>
+                        Pays {faucetAmountPercentage}% of the faucet balance in
+                        test nano (min. Ӿ{faucetAmountMinInNano} and max. Ӿ
+                        {faucetAmountMaxInNano})
+                    </h2>
                     <h3>Please be nice with the faucet, thanks! 🥰</h3>
                     {step && (
                         <h3>
@@ -121,7 +127,10 @@ const Home = () => {
                 <a href={github}>Github repo with code</a>
                 <span>
                     The faucet address is{" "}
-                    <a href={`${nanolookerBaseUrl}/account/${faucetAddress}`}>
+                    <a
+                        className="address"
+                        href={`${nanolookerBaseUrl}/account/${faucetAddress}`}
+                    >
                         {faucetAddress}
                     </a>
                 </span>
@@ -136,7 +145,9 @@ const Home = () => {
                 </span>
                 <span id="donate-to">
                     Donations:{" "}
-                    <a href={`nano:${donationAddress}`}>{donationAddress}</a>
+                    <a className="address" href={`nano:${donationAddress}`}>
+                        {donationAddress}
+                    </a>
                 </span>
             </footer>
         </>

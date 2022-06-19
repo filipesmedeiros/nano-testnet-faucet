@@ -2,7 +2,9 @@ import Big from "big.js";
 import { hashBlock } from "nanocurrency";
 import {
     faucetAddress,
-    faucetAmount,
+    faucetAmountMax,
+    faucetAmountMin,
+    faucetAmountPercentage,
     nanoRpcUrl,
     representativeAddress,
 } from "./constants";
@@ -22,7 +24,20 @@ const getTxnData = async (address: string) => {
 
     const info = await infoResponse.json();
 
-    const newBalanceBig = new Big(info.confirmed_balance).minus(faucetAmount);
+    const decimalOfPercentage = +faucetAmountPercentage / 100;
+    const balanceBig = new Big(info.confirmed_balance);
+    let dropAmountBig = balanceBig.mul(decimalOfPercentage);
+
+    // clamp the drop amount to the min and max amounts
+    if (dropAmountBig.gt(faucetAmountMax))
+        dropAmountBig = new Big(faucetAmountMax);
+    if (dropAmountBig.lt(faucetAmountMin))
+        dropAmountBig = new Big(faucetAmountMin);
+
+    // empty the faucet to this person :)
+    if (dropAmountBig.gt(balanceBig)) dropAmountBig = balanceBig;
+
+    const newBalanceBig = balanceBig.minus(dropAmountBig);
     const newBalance = newBalanceBig.c.join("");
 
     const hash = hashBlock({

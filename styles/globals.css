@@ -94,6 +94,11 @@ footer {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+    max-width: 100%;
+}
+
+footer * {
+    width: 100%;
 }
 
 footer #not-maintained {
@@ -102,6 +107,28 @@ footer #not-maintained {
 
 footer #donate-to {
     font-size: 0.7rem;
+}
+
+@media screen and (max-width: 600px) {
+    footer {
+        gap: 1rem;
+    }
+
+    footer * {
+        font-size: 0.8rem;
+    }
+
+    footer #not-maintained {
+        font-size: 1rem;
+    }
+
+    footer #donate-to {
+        font-size: 0.6rem;
+    }
+}
+
+footer .address {
+    word-wrap: break-word;
 }
 
 * {
