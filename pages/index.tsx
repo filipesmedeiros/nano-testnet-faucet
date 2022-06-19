@@ -41,6 +41,7 @@ const Home = () => {
             throw new Error("Failed to send test nano, please try again");
 
         setHash(data.hash);
+        setStep(undefined);
     };
 
     const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -99,7 +100,10 @@ const Home = () => {
                 </form>
 
                 {hash && (
-                    <a href={`${nanolookerBaseUrl}/block/${hash}`}>
+                    <a
+                        id="faucet-drop-link"
+                        href={`${nanolookerBaseUrl}/block/${hash}`}
+                    >
                         You can see your transaction here, but be sure to set
                         the node&apos;s URL to a test node in the settings!
                     </a>
