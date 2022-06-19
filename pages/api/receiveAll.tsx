@@ -71,7 +71,7 @@ const handler: NextApiHandler = async (req, res) => {
         });
 
         const { work } = await (
-            await fetch(`https://nano.to/${receiveHash}/pow`)
+            await fetch(`https://nano.to/${previousHash}/pow`)
         ).json();
 
         const processRes = await fetch(
@@ -104,13 +104,14 @@ const handler: NextApiHandler = async (req, res) => {
                 error: {
                     code: 500,
                     shortMessage: "Internal server error",
-                    message: "Failed to process block",
+                    message: `Failed to process block: ${processData.error}`,
                 },
             });
             return;
         }
 
         previousHash = processData.hash;
+        currentBalance = newBalance;
     }
 
     res.status(200).json({ success: "Processed all receivable blocks" });
