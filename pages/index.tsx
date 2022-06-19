@@ -3,9 +3,14 @@ import generateSendWork from "../lib/promisifyNanoWebGLPoW";
 import getTxnData from "../lib/getTxnData";
 import {
     addressRegex,
+    donationAddress,
+    email,
     faucetAddress,
     faucetAmountInNano,
+    fediverse,
+    github,
     nanolookerBaseUrl,
+    twitter,
 } from "../lib/constants";
 
 const Home = () => {
@@ -109,9 +114,7 @@ const Home = () => {
                     </a>
                     .
                 </span>
-                <a href="https://github.com/filipesmedeiros/nano-testnet-faucet">
-                    Github repo with code
-                </a>
+                <a href={github}>Github repo with code</a>
                 <span>
                     The faucet address is{" "}
                     <a href={`${nanolookerBaseUrl}/account/${faucetAddress}`}>
@@ -123,17 +126,13 @@ const Home = () => {
                 </a>
                 <span>
                     Contact me on{" "}
-                    <a href="https://twitter.com/filipesm_com">Twitter</a>,{" "}
-                    <a href="https://social.filipesm.com/web/@filipe">
-                        the fediverse
-                    </a>{" "}
-                    or by <a href="mailto:hello@filipesm.com">email</a>
+                    <a href={`https://twitter.com/${twitter}`}>Twitter</a>,{" "}
+                    <a href={fediverse}>the fediverse</a> or by{" "}
+                    <a href={`mailto:${email}`}>email</a>
                 </span>
                 <span id="donate-to">
                     Donations:{" "}
-                    <a href="nano:nano_3stbuoteedww6z5dt4emx9xs6fa5ueeghreicy9p59ygpidizcckuue4ps3f">
-                        nano_3stbuoteedww6z5dt4emx9xs6fa5ueeghreicy9p59ygpidizcckuue4ps3f
-                    </a>
+                    <a href={`nano:${donationAddress}`}>{donationAddress}</a>
                 </span>
             </footer>
         </>
