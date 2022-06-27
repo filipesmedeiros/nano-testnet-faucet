@@ -9,7 +9,7 @@ export const faucetAddress =
 
 export const nanoRpcUrl =
     process.env.NEXT_PUBLIC_NANO_RPC_URL ||
-    "https://nano-testnet.filipesm.com/rpc";
+    "https://test.nano.filipesm.com/rpc";
 
 export const representativeAddress =
     process.env.NEXT_PUBLIC_REPRESENTATIVE_ADDRESS ||

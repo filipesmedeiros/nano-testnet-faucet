@@ -1,6 +1,10 @@
 import { signBlock, checkAddress } from "nanocurrency";
 import { NextApiHandler } from "next";
-import { faucetAddress, representativeAddress } from "../../lib/constants";
+import {
+    faucetAddress,
+    nanoRpcUrl,
+    representativeAddress,
+} from "../../lib/constants";
 import getTxnData from "../../lib/getTxnData";
 
 const handler: NextApiHandler = async (req, res) => {
@@ -45,7 +49,7 @@ const handler: NextApiHandler = async (req, res) => {
 
     const signature = signBlock({ hash, secretKey: process.env.PRIVATE_KEY });
 
-    const processRes = await fetch("https://nano-testnet.filipesm.com/rpc", {
+    const processRes = await fetch(nanoRpcUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -1,7 +1,11 @@
 import Big from "big.js";
 import { signBlock, hashBlock } from "nanocurrency";
 import { NextApiHandler } from "next";
-import { faucetAddress, representativeAddress } from "../../lib/constants";
+import {
+    faucetAddress,
+    nanoRpcUrl,
+    representativeAddress,
+} from "../../lib/constants";
 import getTxnData from "../../lib/getTxnData";
 
 Big.PE = 50;
@@ -18,18 +22,15 @@ const handler: NextApiHandler = async (req, res) => {
         return;
     }
 
-    const receivablesRes = await fetch(
-        "https://nano-testnet.filipesm.com/rpc",
-        {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                action: "receivable",
-                account: faucetAddress,
-                source: "true",
-            }),
-        }
-    );
+    const receivablesRes = await fetch(nanoRpcUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            action: "receivable",
+            account: faucetAddress,
+            source: "true",
+        }),
+    });
 
     const data = (await receivablesRes.json()) as
         | {
@@ -74,28 +75,25 @@ const handler: NextApiHandler = async (req, res) => {
             await fetch(`https://nano.to/${previousHash}/pow`)
         ).json();
 
-        const processRes = await fetch(
-            "https://nano-testnet.filipesm.com/rpc",
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    action: "process",
-                    json_block: "true",
-                    subtype: "receive",
-                    block: {
-                        type: "state",
-                        account: faucetAddress,
-                        previous: previousHash,
-                        representative: representativeAddress,
-                        balance: newBalance,
-                        link: sendHash,
-                        signature,
-                        work,
-                    },
-                }),
-            }
-        );
+        const processRes = await fetch(nanoRpcUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                action: "process",
+                json_block: "true",
+                subtype: "receive",
+                block: {
+                    type: "state",
+                    account: faucetAddress,
+                    previous: previousHash,
+                    representative: representativeAddress,
+                    balance: newBalance,
+                    link: sendHash,
+                    signature,
+                    work,
+                },
+            }),
+        });
 
         const processData = await processRes.json();
 
